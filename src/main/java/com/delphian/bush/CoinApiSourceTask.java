@@ -8,26 +8,26 @@ import com.delphian.bush.service.CoinApiService;
 import com.delphian.bush.service.CoinApiServiceImpl;
 import com.delphian.bush.util.VersionUtil;
 import com.delphian.bush.util.converter.ExchangeRateConverter;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.connect.data.Struct;
 import org.apache.kafka.connect.source.SourceRecord;
 import org.apache.kafka.connect.source.SourceTask;
-import org.springframework.util.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static com.delphian.bush.config.CoinApiSourceConnectorConfig.*;
 import static com.delphian.bush.schema.ExchangeRateSchema.ASSET_ID_QUOTE_FIELD;
 import static com.delphian.bush.schema.ExchangeRateSchema.TIME_FIELD;
+import static com.delphian.bush.service.CoinApiServiceImpl.filterRates;
 import static java.time.LocalDateTime.now;
 
-@Slf4j
 public class CoinApiSourceTask extends SourceTask {
+
+    private static final Logger log = LoggerFactory.getLogger(CoinApiSourceTask.class);
 
     private LocalDateTime latestPoll = null;
 
@@ -61,45 +61,19 @@ public class CoinApiSourceTask extends SourceTask {
         ExchangeRateResponse exchangeResponse = coinApiService.getExchangeRatesByProfile(profile, coinApiKey);
 
         if (exchangeResponse != null && exchangeResponse.getRates() != null) {
-            List<ExchangeRate> filteredRates = exchangeResponse.getRates().stream()
-                    .filter(filterByOffset(sourceOffset))
-                    .sorted(Comparator.comparing(ExchangeRate::getAssetIdQuote))
-                    .collect(Collectors.toList());
+            List<ExchangeRate> filteredRates = filterRates(sourceOffset, exchangeResponse);
 
             log.info("The amount of filtered rates which offset is greater than sourceOffset: {}", filteredRates.size());
-            if (!CollectionUtils.isEmpty(filteredRates)) {
+            if (filteredRates != null && !filteredRates.isEmpty()) {
                 for (ExchangeRate rate : filteredRates) {
+                    log.info("Trying to add sourceRecord: {}", rate.getAssetIdQuote());
                     records.add(generateRecordFromNews(rate));
                 }
             }
         }
 
+        log.info("Kafka sourceRecord list size: {}", records.size());
         return records;
-    }
-
-    private Predicate<ExchangeRate> filterByOffset(Optional<Map<String, Object>> sourceOffset) {
-        return exchangeRate -> {
-            if (sourceOffset.isPresent() &&
-                    sourceOffset.get().get(ASSET_ID_QUOTE_FIELD) != null &&
-                    sourceOffset.get().get(TIME_FIELD) != null
-            ) {
-                String offsetAssetIdQuote = (String) sourceOffset.get().get(ASSET_ID_QUOTE_FIELD);
-                String offsetTime = (String) sourceOffset.get().get(TIME_FIELD);
-
-                log.info("Latest offset is not null, additional checking required");
-                if (exchangeRate.getAssetIdQuote().compareTo(offsetAssetIdQuote) > 0) {
-                    log.info("newsId: [{}] is bigger than latestOffset: [{}], added rate to result", exchangeRate.getAssetIdQuote(), offsetAssetIdQuote);
-                    return true;
-                } else if ((exchangeRate.getAssetIdQuote().compareTo(offsetAssetIdQuote) == 0) && !exchangeRate.getTime().equals(offsetTime)) {
-                    log.info("time is later second case newsId: [{}] is bigger than latestOffset: [{}], added rate to result", exchangeRate.getAssetIdQuote(), offsetAssetIdQuote);
-                    return true;
-                }
-            } else {
-                log.info("Latest offset was null, added rate to result");
-                return true;
-            }
-            return false;
-        };
     }
 
     private Optional<Map<String, Object>> getLatestSourceOffset() {

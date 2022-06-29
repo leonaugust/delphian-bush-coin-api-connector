@@ -15,11 +15,11 @@ public class ExchangeRateConverter implements ConnectPOJOConverter<ExchangeRate>
 
     @Override
     public ExchangeRate fromConnectData(Struct s) {
-        return ExchangeRate.builder()
-                .rate(s.getString(ExchangeRateSchema.RATE_FIELD))
-                .assetIdQuote(s.getString(ExchangeRateSchema.ASSET_ID_QUOTE_FIELD))
-                .time(s.getString(ExchangeRateSchema.TIME_FIELD))
-                .build();
+        ExchangeRate exchangeRate = new ExchangeRate();
+        exchangeRate.setRate(s.getString(ExchangeRateSchema.RATE_FIELD));
+        exchangeRate.setAssetIdQuote(s.getString(ExchangeRateSchema.ASSET_ID_QUOTE_FIELD));
+        exchangeRate.setTime(s.getString(ExchangeRateSchema.TIME_FIELD));
+        return exchangeRate;
     }
 
     @Override
