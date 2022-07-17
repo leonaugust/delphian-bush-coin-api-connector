@@ -6,6 +6,7 @@ import com.delphian.bush.dto.ExchangeRateResponse;
 import com.delphian.bush.schema.ExchangeRateSchema;
 import com.delphian.bush.service.CoinApiService;
 import com.delphian.bush.service.CoinApiServiceImpl;
+import com.delphian.bush.util.TimeUtil;
 import com.delphian.bush.util.VersionUtil;
 import com.delphian.bush.util.converter.ExchangeRateConverter;
 import org.apache.kafka.connect.data.Struct;
@@ -20,8 +21,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static com.delphian.bush.config.CoinApiSourceConnectorConfig.*;
-import static com.delphian.bush.schema.ExchangeRateSchema.ASSET_ID_QUOTE_FIELD;
-import static com.delphian.bush.schema.ExchangeRateSchema.TIME_FIELD;
+import static com.delphian.bush.schema.ExchangeRateSchema.*;
 import static com.delphian.bush.service.CoinApiServiceImpl.filterRates;
 import static java.time.LocalDateTime.now;
 
@@ -123,7 +123,8 @@ public class CoinApiSourceTask extends SourceTask {
         return new Struct(ExchangeRateSchema.EXCHANGE_RATE_KEY_SCHEMA)
                 .put(APPLICATION_CONFIG, config.getString(APPLICATION_CONFIG))
                 .put(ASSET_ID_QUOTE_FIELD, exchangeRate.getAssetIdQuote())
-                .put(TIME_FIELD, exchangeRate.getTime());
+                .put(TIME_FIELD, exchangeRate.getTime())
+                .put(DATE_FIELD, TimeUtil.nowFormatted().toString());
     }
 
     public Struct buildRecordValue(ExchangeRate exchangeRate) {
