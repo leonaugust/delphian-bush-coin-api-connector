@@ -15,6 +15,8 @@ public class ExchangeRateSchema {
 
     public static final String ASSET_ID_QUOTE_FIELD = "asset_id_quote";
 
+    public static final String DATE_FIELD = "date";
+
     public static final String RATE_FIELD = "rate";
 
     public static final Schema EXCHANGE_RATE_SCHEMA = SchemaBuilder.struct()
@@ -29,6 +31,7 @@ public class ExchangeRateSchema {
             .version(FIRST_VERSION)
             .field(APPLICATION_CONFIG, Schema.STRING_SCHEMA)
             .field(TIME_FIELD, Schema.STRING_SCHEMA)
-            .field(ASSET_ID_QUOTE_FIELD, Schema.STRING_SCHEMA);
+            .field(ASSET_ID_QUOTE_FIELD, Schema.STRING_SCHEMA)
+            .field(DATE_FIELD, Schema.STRING_SCHEMA);
 
 }
