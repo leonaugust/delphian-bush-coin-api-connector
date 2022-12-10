@@ -12,16 +12,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static com.delphian.bush.schema.ExchangeRateSchema.ASSET_ID_QUOTE_FIELD;
-import static com.delphian.bush.schema.ExchangeRateSchema.TIME_FIELD;
+import static com.delphian.bush.config.schema.ExchangeRateSchema.ASSET_ID_QUOTE_FIELD;
+import static com.delphian.bush.config.schema.ExchangeRateSchema.TIME_FIELD;
 
 public class CoinApiServiceImpl implements CoinApiService {
 

@@ -1,7 +1,7 @@
 package com.delphian.bush.util.converter;
 
 import com.delphian.bush.dto.ExchangeRate;
-import com.delphian.bush.schema.ExchangeRateSchema;
+import com.delphian.bush.config.schema.ExchangeRateSchema;
 import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.Struct;
 

@@ -3,7 +3,7 @@ package com.delphian.bush;
 import com.delphian.bush.config.CoinApiSourceConnectorConfig;
 import com.delphian.bush.dto.ExchangeRate;
 import com.delphian.bush.dto.ExchangeRateResponse;
-import com.delphian.bush.schema.ExchangeRateSchema;
+import com.delphian.bush.config.schema.ExchangeRateSchema;
 import com.delphian.bush.service.CoinApiService;
 import com.delphian.bush.service.CoinApiServiceImpl;
 import com.delphian.bush.util.TimeUtil;
@@ -21,7 +21,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static com.delphian.bush.config.CoinApiSourceConnectorConfig.*;
-import static com.delphian.bush.schema.ExchangeRateSchema.*;
+import static com.delphian.bush.config.schema.ExchangeRateSchema.*;
 import static com.delphian.bush.service.CoinApiServiceImpl.filterRates;
 import static java.time.LocalDateTime.now;
 

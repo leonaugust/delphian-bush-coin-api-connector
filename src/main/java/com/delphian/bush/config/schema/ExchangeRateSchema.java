@@ -1,4 +1,4 @@
-package com.delphian.bush.schema;
+package com.delphian.bush.config.schema;
 
 import com.delphian.bush.dto.ExchangeRate;
 import org.apache.kafka.connect.data.Schema;
