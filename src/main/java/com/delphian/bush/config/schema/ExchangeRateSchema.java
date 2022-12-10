@@ -21,10 +21,11 @@ public class ExchangeRateSchema {
 
     public static final Schema EXCHANGE_RATE_SCHEMA = SchemaBuilder.struct()
             .name(SCHEMA_NAME)
-            .version(FIRST_VERSION)
             .field(TIME_FIELD, Schema.OPTIONAL_STRING_SCHEMA)
             .field(ASSET_ID_QUOTE_FIELD, Schema.OPTIONAL_STRING_SCHEMA)
             .field(RATE_FIELD, Schema.OPTIONAL_STRING_SCHEMA)
+            .version(FIRST_VERSION)
+            .optional()
             .build();
 
     public static final Schema EXCHANGE_RATE_KEY_SCHEMA = SchemaBuilder.struct()

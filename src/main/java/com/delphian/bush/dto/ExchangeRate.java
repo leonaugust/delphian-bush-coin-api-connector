@@ -2,9 +2,11 @@ package com.delphian.bush.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Builder
 public class ExchangeRate {
 
     private String time;
