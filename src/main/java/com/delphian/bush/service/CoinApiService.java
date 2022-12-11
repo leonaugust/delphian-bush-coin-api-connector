@@ -9,8 +9,6 @@ import java.util.Optional;
 
 public interface CoinApiService {
 
-   List<ExchangeRate> getFilteredRates(String profile, String apiKey, Optional<Map<String, Object>> sourceOffset);
-
-   ExchangeRateResponse getExchangeRatesByProfile(String profile, String apiKey);
+   List<ExchangeRate> getFilteredRates(Optional<Map<String, Object>> sourceOffset);
 
 }

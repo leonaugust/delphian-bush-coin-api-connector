@@ -33,7 +33,7 @@ public class CoinApiSourceTask extends SourceTask {
 
     private CoinApiSourceConnectorConfig config;
 
-    private final CoinApiService coinApiService = new CoinApiServiceImpl();
+    private CoinApiService coinApiService;
 
     @Override
     public String version() {
@@ -43,6 +43,7 @@ public class CoinApiSourceTask extends SourceTask {
     @Override
     public void start(Map<String, String> props) {
         config = new CoinApiSourceConnectorConfig(props);
+        coinApiService = new CoinApiServiceImpl(config);
     }
 
     @Override
@@ -56,9 +57,7 @@ public class CoinApiSourceTask extends SourceTask {
         }
         List<SourceRecord> records = new ArrayList<>();
         Optional<Map<String, Object>> sourceOffset = getLatestSourceOffset();
-        String profile = config.getString(PROFILE_ACTIVE_CONFIG);
-        String coinApiKey = config.getString(CRYPTO_PANIC_KEY_CONFIG);
-        List<ExchangeRate> filteredRates = coinApiService.getFilteredRates(profile, coinApiKey, sourceOffset);
+        List<ExchangeRate> filteredRates = coinApiService.getFilteredRates(sourceOffset);
 
         log.info("The amount of filtered rates which offset is greater than sourceOffset: {}", filteredRates.size());
         if (!CollectionUtils.isEmpty(filteredRates)) {

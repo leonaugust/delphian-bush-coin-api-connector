@@ -1,5 +1,6 @@
 package com.delphian.bush.service;
 
+import com.delphian.bush.config.CoinApiSourceConnectorConfig;
 import com.delphian.bush.dto.ExchangeRate;
 import com.delphian.bush.dto.ExchangeRateResponse;
 import com.delphian.bush.util.json.ExchangeRateJsonServiceImpl;
@@ -18,19 +19,27 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.delphian.bush.config.CoinApiSourceConnectorConfig.CRYPTO_PANIC_KEY_CONFIG;
+import static com.delphian.bush.config.CoinApiSourceConnectorConfig.PROFILE_ACTIVE_CONFIG;
 import static com.delphian.bush.config.schema.ExchangeRateSchema.ASSET_ID_QUOTE_FIELD;
 import static com.delphian.bush.config.schema.ExchangeRateSchema.TIME_FIELD;
 
 public class CoinApiServiceImpl implements CoinApiService {
 
-    private static final Logger log = LoggerFactory.getLogger(CoinApiServiceImpl.class);
-
     public static final String TEST_PROFILE = "test";
     public static final int START_PAGE = 1;
+    private static final Logger log = LoggerFactory.getLogger(CoinApiServiceImpl.class);
+
+    private final CoinApiSourceConnectorConfig config;
+
+    public CoinApiServiceImpl(CoinApiSourceConnectorConfig config) {
+        this.config = config;
+    }
+
 
     @Override
-    public List<ExchangeRate> getFilteredRates(String profile, String apiKey, Optional<Map<String, Object>> sourceOffset) {
-        return getExchangeRatesByProfile(profile, apiKey).getRates().stream()
+    public List<ExchangeRate> getFilteredRates(Optional<Map<String, Object>> sourceOffset) {
+        return getRates().getRates().stream()
                 .filter(filterByOffset(sourceOffset))
                 .sorted(Comparator.comparing(ExchangeRate::getAssetIdQuote))
                 .collect(Collectors.toList());
@@ -61,16 +70,16 @@ public class CoinApiServiceImpl implements CoinApiService {
         };
     }
 
-    @Override
-    public ExchangeRateResponse getExchangeRatesByProfile(String profile, String apiKey) {
+    public ExchangeRateResponse getRates() {
+        String profile = config.getString(PROFILE_ACTIVE_CONFIG);
         if (profile.equals(TEST_PROFILE)) {
             return getMockedExchangeRates();
         } else {
-            return getExchangeRates(apiKey);
+            return getExchangeRates();
         }
     }
 
-    private static ExchangeRateResponse getMockedExchangeRates() {
+    private ExchangeRateResponse getMockedExchangeRates() {
         log.info("Using test mocked rates");
         try {
             log.info("Response from mocked-rates file");
@@ -82,14 +91,15 @@ public class CoinApiServiceImpl implements CoinApiService {
     }
 
 
-    private static ExchangeRateResponse getExchangeRates(String apiKey) {
+    private ExchangeRateResponse getExchangeRates() {
         try {
             TimeUnit.SECONDS.sleep(1L);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
 
-        log.info("Getting news from API");
+        String apiKey = config.getString(CRYPTO_PANIC_KEY_CONFIG);
+        log.info("Getting rates from API");
         Map<String, Object> params = new HashMap<>();
         params.put("apiKey", apiKey);
         params.put("invert", "true");
