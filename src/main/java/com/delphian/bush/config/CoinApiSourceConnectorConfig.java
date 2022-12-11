@@ -1,9 +1,13 @@
 package com.delphian.bush.config;
 
+import com.delphian.bush.config.validator.ActiveProfileValidator;
+import com.delphian.bush.config.validator.PollTimeoutValidator;
 import org.apache.kafka.common.config.AbstractConfig;
 import org.apache.kafka.common.config.ConfigDef;
 
 import java.util.Map;
+
+import static com.delphian.bush.service.CoinApiServiceImpl.TEST_PROFILE;
 
 public class CoinApiSourceConnectorConfig extends AbstractConfig {
 
@@ -44,8 +48,8 @@ public class CoinApiSourceConnectorConfig extends AbstractConfig {
                 .define(TOPIC_CONFIG, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, TOPIC_DOC)
                 .define(APPLICATION_CONFIG, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, APPLICATION_DOC)
                 .define(COIN_API_KEY_CONFIG, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, COIN_API_KEY_DOC)
-                .define(PROFILE_ACTIVE_CONFIG, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, PROFILE_DOC)
-                .define(POLL_TIMEOUT_CONFIG, ConfigDef.Type.LONG, ConfigDef.Importance.HIGH, POLL_TIMEOUT_DOC)
+                .define(PROFILE_ACTIVE_CONFIG, ConfigDef.Type.STRING, TEST_PROFILE, new ActiveProfileValidator(), ConfigDef.Importance.HIGH,  PROFILE_DOC)
+                .define(POLL_TIMEOUT_CONFIG, ConfigDef.Type.LONG, 60, new PollTimeoutValidator(), ConfigDef.Importance.HIGH, POLL_TIMEOUT_DOC)
                 .define(DEBUG_ADDITIONAL_INFO, ConfigDef.Type.BOOLEAN, false, ConfigDef.Importance.LOW, DEBUG_ADDITIONAL_INFO_DOC);
     }
 }

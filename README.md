@@ -5,7 +5,7 @@ Add your properties in the following directory /config/custom-connector.properti
     name=CoinApiSourceConnectorDemo
     tasks.max=1
     connector.class=com.delphian.com.delphian.bush.CoinApiSourceConnector
-    topic=rates
+    topic=exchange-rates
     application=crypto-rates
     coin.api.key=YOUR_API_KEY
     profile.active=test
