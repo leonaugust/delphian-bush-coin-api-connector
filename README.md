@@ -11,27 +11,53 @@ Add your properties in the following directory /config/custom-connector.properti
     profile.active=test
     poll.timeout=60
 
-* profile.active
-Available values: [test/prod]. If "test" will get the mocked news instead of calling crypto-panic api
+Configurable parameters:
+* `profile.active` - Default: **test**. Available values: [test/prod].  
+  **test** - will poll 20 mocked news  
+  **prod** - will call real coin-api, requires API_KEY
+
+* `application` - Name of your application  
+  Will be included in your key schema
+
+* `topic` - Name of the topic to which kafka will push the data
+
+* `poll.timeout` - Default: 60. Should be bigger than 10. Time in seconds between the poll.
+
+* `name` - The last offset will be associated with the name given. **Side note**: for testing purposes, change name after each start.
+  Otherwise, the connector will keep the latest offset to track the place where he left
+
+Additional properties:
+* `debug.additional.info` - Optional(default - false). Available values: [true/false].
+  Enables logging of the additional information.
+
 
 -----
-**Testing**
+**Testing in standalone mode**
 
+Launch Kafka with docker-compose(starts on port *29092*)
 
+    cd kafka
+    docker-compose up -d
+-----
 Start in standalone mode
 
-    mvn clean package
+    cd ..
+    mvn clean package -DskipTests
     ./run.sh
 
 -----
-Stop connector
+Read data
 
-    docker container ls
-    docker container stop [CONTAINER]
+    docker exec --interactive --tty kafka \
+    kafka-console-consumer --bootstrap-server kafka:29092 \
+    --topic exchange-rates \
+    --from-beginning
+
 -----
 
-Clean up data written to Kafka by removing all containers and volumes
+Stop connector and clean up data written to Kafka
 
-    docker container prune
-    docker volume prune
+    cd kafka
+    docker container stop rates-connector
+    docker-compose down --volumes
 -----

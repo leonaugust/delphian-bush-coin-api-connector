@@ -41,9 +41,7 @@ public class CoinApiServiceImpl implements CoinApiService {
                 .sorted(Comparator.comparing(ExchangeRate::getAssetIdQuote))
                 .collect(Collectors.toList());
         Boolean additionalDebugEnabled = config.getBoolean(DEBUG_ADDITIONAL_INFO);
-        if (additionalDebugEnabled) {
-            log.info("The amount of filtered rates which offset is greater than sourceOffset: {}", filtered.size());
-        }
+        log.info("The amount of filtered rates which offset is greater than sourceOffset: {}", filtered.size());
         return filtered;
     }
 

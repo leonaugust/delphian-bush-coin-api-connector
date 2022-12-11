@@ -25,7 +25,6 @@ public class ExchangeRateJsonServiceImpl {
 
     public ExchangeRateResponse getFromJson() {
         try {
-            log.debug("Json test service encountered unexpected exception: {}", "UHUUSDUH");
             return objectMapper.readValue(inputStream, targetClass);
         } catch (IOException e) {
             log.debug("Json test service encountered unexpected exception: {}", e.getMessage());
