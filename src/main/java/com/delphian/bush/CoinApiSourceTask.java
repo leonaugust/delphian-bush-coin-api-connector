@@ -47,12 +47,12 @@ public class CoinApiSourceTask extends SourceTask {
 
     @Override
     public List<SourceRecord> poll() throws InterruptedException {
-        Long seconds = config.getLong(POLL_TIMEOUT_CONFIG);
-        if (latestPoll == null || now().isAfter(latestPoll.plusSeconds(seconds))) {
+        Long timeoutSeconds = config.getLong(POLL_TIMEOUT_CONFIG);
+        if (latestPoll == null || now().isAfter(latestPoll.plusSeconds(timeoutSeconds))) {
             latestPoll = LocalDateTime.now();
         } else {
-            log.info("Poll timeout: [{}] seconds", seconds);
-            TimeUnit.SECONDS.sleep(seconds);
+            log.info("Poll timeout: [{}] seconds", timeoutSeconds);
+            TimeUnit.SECONDS.sleep(timeoutSeconds);
         }
         List<ExchangeRate> filteredRates = coinApiService.getFilteredRates(getLatestSourceOffset());
 

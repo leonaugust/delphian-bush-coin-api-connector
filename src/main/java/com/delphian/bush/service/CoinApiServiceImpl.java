@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.delphian.bush.config.CoinApiSourceConnectorConfig.*;
@@ -33,42 +32,35 @@ public class CoinApiServiceImpl implements CoinApiService {
         this.config = config;
     }
 
-
     @Override
     public List<ExchangeRate> getFilteredRates(Optional<String> sourceOffset) {
-        List<ExchangeRate> filtered = getRates().stream()
-                .filter(filterByOffset(sourceOffset))
-                .sorted(Comparator.comparing(ExchangeRate::getAssetIdQuote))
-                .collect(Collectors.toList());
-        Boolean additionalDebugEnabled = config.getBoolean(DEBUG_ADDITIONAL_INFO);
-        log.info("The amount of filtered rates which offset is greater than sourceOffset: {}", filtered.size());
-        return filtered;
-    }
-
-    @SuppressWarnings("all")
-    private Predicate<ExchangeRate> filterByOffset(Optional<String> sourceOffset) {
         Boolean additionalDebugEnabled = config.getBoolean(DEBUG_ADDITIONAL_INFO);
         if (additionalDebugEnabled && !sourceOffset.isPresent()) {
             log.info("Latest offset is not null, additional checking required");
         }
 
-        return exchangeRate -> {
-            if (sourceOffset.isPresent()) {
-                String offsetTime = sourceOffset.get();
-                if (ZonedDateTime.parse(exchangeRate.getTime()).toLocalDateTime().isAfter(ZonedDateTime.parse(offsetTime).toLocalDateTime())) {
-                    if (additionalDebugEnabled) {
-                        log.info("ExchangeRate time[{}] is later than recorded in sourceOffset[{}], added rate to result", exchangeRate.getTime(), offsetTime);
+        List<ExchangeRate> filtered = getRates().stream()
+                .filter(exchangeRate -> {
+                    if (sourceOffset.isPresent()) {
+                        String offsetTime = sourceOffset.get();
+                        if (ZonedDateTime.parse(exchangeRate.getTime()).toLocalDateTime().isAfter(ZonedDateTime.parse(offsetTime).toLocalDateTime())) {
+                            if (additionalDebugEnabled) {
+                                log.info("ExchangeRate time[{}] is later than recorded in sourceOffset[{}], added rate to result", exchangeRate.getTime(), offsetTime);
+                            }
+                            return true;
+                        }
+                    } else {
+                        if (additionalDebugEnabled) {
+                            log.info("Latest offset was null, added rate to result");
+                        }
+                        return true;
                     }
-                    return true;
-                }
-            } else {
-                if (additionalDebugEnabled) {
-                    log.info("Latest offset was null, added rate to result");
-                }
-                return true;
-            }
-            return false;
-        };
+                    return false;
+                })
+                .sorted(Comparator.comparing(ExchangeRate::getAssetIdQuote))
+                .collect(Collectors.toList());
+        log.info("The amount of filtered rates which offset is greater than sourceOffset: {}", filtered.size());
+        return filtered;
     }
 
     public List<ExchangeRate> getRates() {
@@ -81,12 +73,11 @@ public class CoinApiServiceImpl implements CoinApiService {
     }
 
     private List<ExchangeRate> getMockedExchangeRates() {
-        log.info("Using test mocked rates");
         try {
-            log.info("Response from mocked-rates file");
+            log.info("Reading rates from mocked-rates file");
             return new ExchangeRateJsonServiceImpl(new ObjectMapper()).getFromJson().getRates();
         } catch (IOException e) {
-            log.error("Something happened. {}", e.getMessage());
+            log.error("Encountered unexpected exception: {}", e.getMessage());
             throw new RuntimeException();
         }
     }
