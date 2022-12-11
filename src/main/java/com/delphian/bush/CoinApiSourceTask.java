@@ -1,9 +1,8 @@
 package com.delphian.bush;
 
 import com.delphian.bush.config.CoinApiSourceConnectorConfig;
-import com.delphian.bush.dto.ExchangeRate;
-import com.delphian.bush.dto.ExchangeRateResponse;
 import com.delphian.bush.config.schema.ExchangeRateSchema;
+import com.delphian.bush.dto.ExchangeRate;
 import com.delphian.bush.service.CoinApiService;
 import com.delphian.bush.service.CoinApiServiceImpl;
 import com.delphian.bush.util.TimeUtil;
@@ -55,26 +54,29 @@ public class CoinApiSourceTask extends SourceTask {
             log.info("Poll timeout: [{}] seconds", seconds);
             TimeUnit.SECONDS.sleep(seconds);
         }
-        List<SourceRecord> records = new ArrayList<>();
-        Optional<Map<String, Object>> sourceOffset = getLatestSourceOffset();
-        List<ExchangeRate> filteredRates = coinApiService.getFilteredRates(sourceOffset);
+        List<ExchangeRate> filteredRates = coinApiService.getFilteredRates(getLatestSourceOffset());
 
+        List<SourceRecord> records = new ArrayList<>();
         if (!CollectionUtils.isEmpty(filteredRates)) {
             for (ExchangeRate rate : filteredRates) {
                 records.add(generateRecordFromNews(rate));
             }
         }
 
-        log.info("Kafka sourceRecord list size: {}", records.size());
         return records;
     }
 
-    private Optional<Map<String, Object>> getLatestSourceOffset() {
+    private Optional<String> getLatestSourceOffset() {
         if (context.offsetStorageReader() != null) {
-            sourcePartition();
-            if (context.offsetStorageReader().offset(sourcePartition()) != null) {
-                Map<String, Object> offset = context.offsetStorageReader().offset(sourcePartition());
-                return Optional.of(offset);
+            Map<String, Object> offset = context.offsetStorageReader().offset(sourcePartition());
+            if (offset != null) {
+                log.info("Offset is not null");
+                Object timeField = offset.get(TIME_FIELD);
+                if (timeField != null) {
+                    String latestTime = (String) timeField;
+                    log.debug("latestOffset: {}", latestTime);
+                    return Optional.of(latestTime);
+                }
             }
         }
 
@@ -102,17 +104,13 @@ public class CoinApiSourceTask extends SourceTask {
         return partitionProperties;
     }
 
-    //  Track the exact place we have been reading
-    // do something with pagination and size
     private Map<String, String> sourceOffset(ExchangeRate rate) {
         Map<String, String> map = new HashMap<>();
-        map.put(ASSET_ID_QUOTE_FIELD, rate.getAssetIdQuote());
         map.put(TIME_FIELD, rate.getTime());
         return map;
     }
 
     private Struct buildRecordKey(ExchangeRate exchangeRate) {
-        // Key Schema
         return new Struct(ExchangeRateSchema.EXCHANGE_RATE_KEY_SCHEMA)
                 .put(APPLICATION_CONFIG, config.getString(APPLICATION_CONFIG))
                 .put(ASSET_ID_QUOTE_FIELD, exchangeRate.getAssetIdQuote())
@@ -121,9 +119,7 @@ public class CoinApiSourceTask extends SourceTask {
     }
 
     public Struct buildRecordValue(ExchangeRate exchangeRate) {
-        Struct struct = ExchangeRateConverter.INSTANCE.toConnectData(exchangeRate);
-//        log.debug("Resulting struct: {}", struct);
-        return struct;
+        return ExchangeRateConverter.INSTANCE.toConnectData(exchangeRate);
     }
 
     @Override

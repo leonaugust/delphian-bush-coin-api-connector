@@ -46,11 +46,7 @@ public class CoinApiServiceImplTest {
         List<ExchangeRate> rates = coinApiService.getFilteredRates(Optional.empty());
         int pivot = rates.size() / 2;
         ExchangeRate pivotRate = rates.get(pivot - 1);
-        Map<String, Object> offset = new HashMap<>();
-        offset.put(ASSET_ID_QUOTE_FIELD, pivotRate.getAssetIdQuote());
-        offset.put(TIME_FIELD, pivotRate.getTime());
-
-        List<ExchangeRate> filtered = coinApiService.getFilteredRates(Optional.of(offset));
+        List<ExchangeRate> filtered = coinApiService.getFilteredRates(Optional.of(pivotRate.getTime()));
         assertTrue(filtered.size() < rates.size());
     }
 

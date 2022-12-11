@@ -20,8 +20,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.delphian.bush.config.CoinApiSourceConnectorConfig.*;
-import static com.delphian.bush.config.schema.ExchangeRateSchema.ASSET_ID_QUOTE_FIELD;
-import static com.delphian.bush.config.schema.ExchangeRateSchema.TIME_FIELD;
 
 public class CoinApiServiceImpl implements CoinApiService {
 
@@ -37,7 +35,7 @@ public class CoinApiServiceImpl implements CoinApiService {
 
 
     @Override
-    public List<ExchangeRate> getFilteredRates(Optional<Map<String, Object>> sourceOffset) {
+    public List<ExchangeRate> getFilteredRates(Optional<String> sourceOffset) {
         List<ExchangeRate> filtered = getRates().stream()
                 .filter(filterByOffset(sourceOffset))
                 .sorted(Comparator.comparing(ExchangeRate::getAssetIdQuote))
@@ -49,23 +47,19 @@ public class CoinApiServiceImpl implements CoinApiService {
         return filtered;
     }
 
-    private Predicate<ExchangeRate> filterByOffset(Optional<Map<String, Object>> sourceOffset) {
+    @SuppressWarnings("all")
+    private Predicate<ExchangeRate> filterByOffset(Optional<String> sourceOffset) {
         Boolean additionalDebugEnabled = config.getBoolean(DEBUG_ADDITIONAL_INFO);
         if (additionalDebugEnabled && !sourceOffset.isPresent()) {
             log.info("Latest offset is not null, additional checking required");
         }
 
         return exchangeRate -> {
-            if (sourceOffset.isPresent() &&
-                    sourceOffset.get().get(ASSET_ID_QUOTE_FIELD) != null &&
-                    sourceOffset.get().get(TIME_FIELD) != null
-            ) {
-                String offsetAssetIdQuote = (String) sourceOffset.get().get(ASSET_ID_QUOTE_FIELD);
-                String offsetTime = (String) sourceOffset.get().get(TIME_FIELD);
-                if (ZonedDateTime.parse(exchangeRate.getTime()).toLocalDateTime() // all rates have the same time. If coin-api received new rates, the time parameter will be increased
-                        .isAfter(ZonedDateTime.parse(offsetTime).toLocalDateTime())) {
+            if (sourceOffset.isPresent()) {
+                String offsetTime = sourceOffset.get();
+                if (ZonedDateTime.parse(exchangeRate.getTime()).toLocalDateTime().isAfter(ZonedDateTime.parse(offsetTime).toLocalDateTime())) {
                     if (additionalDebugEnabled) {
-                        log.info("time is later second case newsId: [{}] is bigger than latestOffset: [{}], added rate to result", exchangeRate.getAssetIdQuote(), offsetAssetIdQuote);
+                        log.info("ExchangeRate time[{}] is later than recorded in sourceOffset[{}], added rate to result", exchangeRate.getTime(), offsetTime);
                     }
                     return true;
                 }
@@ -82,17 +76,17 @@ public class CoinApiServiceImpl implements CoinApiService {
     public List<ExchangeRate> getRates() {
         String profile = config.getString(PROFILE_ACTIVE_CONFIG);
         if (profile.equals(TEST_PROFILE)) {
-            return getMockedExchangeRates().getRates();
+            return getMockedExchangeRates();
         } else {
-            return getExchangeRates().getRates();
+            return getRatesFromApi().getRates();
         }
     }
 
-    private ExchangeRateResponse getMockedExchangeRates() {
+    private List<ExchangeRate> getMockedExchangeRates() {
         log.info("Using test mocked rates");
         try {
             log.info("Response from mocked-rates file");
-            return new ExchangeRateJsonServiceImpl(new ObjectMapper()).getFromJson();
+            return new ExchangeRateJsonServiceImpl(new ObjectMapper()).getFromJson().getRates();
         } catch (IOException e) {
             log.error("Something happened. {}", e.getMessage());
             throw new RuntimeException();
@@ -100,7 +94,7 @@ public class CoinApiServiceImpl implements CoinApiService {
     }
 
 
-    private ExchangeRateResponse getExchangeRates() {
+    private ExchangeRateResponse getRatesFromApi() {
         try {
             TimeUnit.SECONDS.sleep(1L);
         } catch (InterruptedException e) {
@@ -119,8 +113,7 @@ public class CoinApiServiceImpl implements CoinApiService {
                 .asJson();
 
         try {
-            ExchangeRateResponse exchangeRateResponse = new ObjectMapper().readValue(response.getBody().toString(), ExchangeRateResponse.class);
-            return exchangeRateResponse;
+            return new ObjectMapper().readValue(response.getBody().toString(), ExchangeRateResponse.class);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e.getMessage());
         }
