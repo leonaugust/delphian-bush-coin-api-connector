@@ -10,13 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-// Should load the configs and create a few tasks
 public class CoinApiSourceConnector extends SourceConnector {
     private CoinApiSourceConnectorConfig config;
 
     @Override
     public void start(Map<String, String> props) {
-        // The complete version includes error handling as well.
         config = new CoinApiSourceConnectorConfig(props);
     }
 
@@ -39,7 +37,6 @@ public class CoinApiSourceConnector extends SourceConnector {
 
     @Override
     public ConfigDef config() {
-        // TODO. Can add validators here
         return CoinApiSourceConnectorConfig.conf();
     }
 

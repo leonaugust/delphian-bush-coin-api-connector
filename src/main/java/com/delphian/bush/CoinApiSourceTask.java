@@ -97,7 +97,6 @@ public class CoinApiSourceTask extends SourceTask {
         );
     }
 
-    // Track which source we have been reading.
     private Map<String, String> sourcePartition() {
         Map<String, String> partitionProperties = new HashMap<>();
         partitionProperties.put(APPLICATION_CONFIG, config.getString(APPLICATION_CONFIG));
