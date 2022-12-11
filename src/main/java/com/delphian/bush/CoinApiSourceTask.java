@@ -13,7 +13,6 @@ import org.apache.kafka.connect.source.SourceRecord;
 import org.apache.kafka.connect.source.SourceTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.CollectionUtils;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -57,7 +56,7 @@ public class CoinApiSourceTask extends SourceTask {
         List<ExchangeRate> filteredRates = coinApiService.getFilteredRates(getLatestSourceOffset());
 
         List<SourceRecord> records = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(filteredRates)) {
+        if (filteredRates != null && !filteredRates.isEmpty()) {
             for (ExchangeRate rate : filteredRates) {
                 records.add(generateRecordFromNews(rate));
             }
