@@ -28,8 +28,9 @@ public class CoinApiServiceImpl implements CoinApiService {
     public static final String TEST_PROFILE = "test";
     public static final int START_PAGE = 1;
 
-    public static List<ExchangeRate> filterRates(Optional<Map<String, Object>> sourceOffset, ExchangeRateResponse exchangeResponse) {
-        return exchangeResponse.getRates().stream()
+    @Override
+    public List<ExchangeRate> getFilteredRates(String profile, String apiKey, Optional<Map<String, Object>> sourceOffset) {
+        return getExchangeRatesByProfile(profile, apiKey).getRates().stream()
                 .filter(filterByOffset(sourceOffset))
                 .sorted(Comparator.comparing(ExchangeRate::getAssetIdQuote))
                 .collect(Collectors.toList());

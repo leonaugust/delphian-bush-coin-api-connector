@@ -14,6 +14,7 @@ import org.apache.kafka.connect.source.SourceRecord;
 import org.apache.kafka.connect.source.SourceTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -22,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 
 import static com.delphian.bush.config.CoinApiSourceConnectorConfig.*;
 import static com.delphian.bush.config.schema.ExchangeRateSchema.*;
-import static com.delphian.bush.service.CoinApiServiceImpl.filterRates;
 import static java.time.LocalDateTime.now;
 
 public class CoinApiSourceTask extends SourceTask {
@@ -58,17 +58,13 @@ public class CoinApiSourceTask extends SourceTask {
         Optional<Map<String, Object>> sourceOffset = getLatestSourceOffset();
         String profile = config.getString(PROFILE_ACTIVE_CONFIG);
         String coinApiKey = config.getString(CRYPTO_PANIC_KEY_CONFIG);
-        ExchangeRateResponse exchangeResponse = coinApiService.getExchangeRatesByProfile(profile, coinApiKey);
+        List<ExchangeRate> filteredRates = coinApiService.getFilteredRates(profile, coinApiKey, sourceOffset);
 
-        if (exchangeResponse != null && exchangeResponse.getRates() != null) {
-            List<ExchangeRate> filteredRates = filterRates(sourceOffset, exchangeResponse);
-
-            log.info("The amount of filtered rates which offset is greater than sourceOffset: {}", filteredRates.size());
-            if (filteredRates != null && !filteredRates.isEmpty()) {
-                for (ExchangeRate rate : filteredRates) {
-                    log.info("Trying to add sourceRecord: {}", rate.getAssetIdQuote());
-                    records.add(generateRecordFromNews(rate));
-                }
+        log.info("The amount of filtered rates which offset is greater than sourceOffset: {}", filteredRates.size());
+        if (!CollectionUtils.isEmpty(filteredRates)) {
+            for (ExchangeRate rate : filteredRates) {
+                log.info("Trying to add sourceRecord: {}", rate.getAssetIdQuote());
+                records.add(generateRecordFromNews(rate));
             }
         }
 
