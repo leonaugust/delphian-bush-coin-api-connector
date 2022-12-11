@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static com.delphian.bush.config.CoinApiSourceConnectorConfig.CRYPTO_PANIC_KEY_CONFIG;
+import static com.delphian.bush.config.CoinApiSourceConnectorConfig.COIN_API_KEY_CONFIG;
 import static com.delphian.bush.config.CoinApiSourceConnectorConfig.PROFILE_ACTIVE_CONFIG;
 import static com.delphian.bush.config.schema.ExchangeRateSchema.ASSET_ID_QUOTE_FIELD;
 import static com.delphian.bush.config.schema.ExchangeRateSchema.TIME_FIELD;
@@ -98,7 +98,7 @@ public class CoinApiServiceImpl implements CoinApiService {
             throw new RuntimeException(e);
         }
 
-        String apiKey = config.getString(CRYPTO_PANIC_KEY_CONFIG);
+        String apiKey = config.getString(COIN_API_KEY_CONFIG);
         log.info("Getting rates from API");
         Map<String, Object> params = new HashMap<>();
         params.put("apiKey", apiKey);

@@ -1,13 +1,13 @@
-Delphian Bush. Crypto Panic Source Connector.
+Delphian Bush. Coin Api Source Connector.
 -----------------
 Add your properties in the following directory /config/custom-connector.properties
 
-    name=CryptoPanicSourceConnectorDemo
+    name=CoinApiSourceConnectorDemo
     tasks.max=1
     connector.class=com.delphian.com.delphian.bush.CoinApiSourceConnector
-    topic=crypto-news
-    application=crypto-hoover
-    crypto.panic.key=YOUR_API_KEY
+    topic=rates
+    application=crypto-rates
+    coin.api.key=YOUR_API_KEY
     profile.active=test
     poll.timeout=60
 

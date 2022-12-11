@@ -14,8 +14,8 @@ public class CoinApiSourceConnectorConfig extends AbstractConfig {
     public static final String TOPIC_CONFIG = "topic";
     private static final String TOPIC_DOC = "Topic to write to";
 
-    public static final String CRYPTO_PANIC_KEY_CONFIG = "crypto.panic.key";
-    public static final String CRYPTO_PANIC_KEY_DOC = "Specify your crypto panic api key";
+    public static final String COIN_API_KEY_CONFIG = "coin.api.key";
+    public static final String COIN_API_KEY_DOC = "Specify your crypto panic api key";
 
 
     public static final String PROFILE_ACTIVE_CONFIG = "profile.active";
@@ -39,7 +39,7 @@ public class CoinApiSourceConnectorConfig extends AbstractConfig {
         return new ConfigDef()
                 .define(TOPIC_CONFIG, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, TOPIC_DOC)
                 .define(APPLICATION_CONFIG, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, APPLICATION_DOC)
-                .define(CRYPTO_PANIC_KEY_CONFIG, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, CRYPTO_PANIC_KEY_DOC)
+                .define(COIN_API_KEY_CONFIG, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, COIN_API_KEY_DOC)
                 .define(PROFILE_ACTIVE_CONFIG, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, PROFILE_DOC)
                 .define(POLL_TIMEOUT_CONFIG, ConfigDef.Type.LONG, ConfigDef.Importance.HIGH, POLL_TIMEOUT_DOC);
     }
