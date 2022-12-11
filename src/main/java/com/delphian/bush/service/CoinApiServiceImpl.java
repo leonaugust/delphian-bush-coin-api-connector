@@ -27,7 +27,7 @@ import static com.delphian.bush.config.schema.ExchangeRateSchema.TIME_FIELD;
 public class CoinApiServiceImpl implements CoinApiService {
 
     public static final String TEST_PROFILE = "test";
-    public static final int START_PAGE = 1;
+    public static final String PROD_PROFILE = "prod";
     private static final Logger log = LoggerFactory.getLogger(CoinApiServiceImpl.class);
 
     private final CoinApiSourceConnectorConfig config;
@@ -39,13 +39,13 @@ public class CoinApiServiceImpl implements CoinApiService {
 
     @Override
     public List<ExchangeRate> getFilteredRates(Optional<Map<String, Object>> sourceOffset) {
-        return getRates().getRates().stream()
+        return getRates().stream()
                 .filter(filterByOffset(sourceOffset))
                 .sorted(Comparator.comparing(ExchangeRate::getAssetIdQuote))
                 .collect(Collectors.toList());
     }
 
-    public static Predicate<ExchangeRate> filterByOffset(Optional<Map<String, Object>> sourceOffset) {
+    private Predicate<ExchangeRate> filterByOffset(Optional<Map<String, Object>> sourceOffset) {
         return exchangeRate -> {
             if (sourceOffset.isPresent() &&
                     sourceOffset.get().get(ASSET_ID_QUOTE_FIELD) != null &&
@@ -70,12 +70,12 @@ public class CoinApiServiceImpl implements CoinApiService {
         };
     }
 
-    public ExchangeRateResponse getRates() {
+    public List<ExchangeRate> getRates() {
         String profile = config.getString(PROFILE_ACTIVE_CONFIG);
         if (profile.equals(TEST_PROFILE)) {
-            return getMockedExchangeRates();
+            return getMockedExchangeRates().getRates();
         } else {
-            return getExchangeRates();
+            return getExchangeRates().getRates();
         }
     }
 
