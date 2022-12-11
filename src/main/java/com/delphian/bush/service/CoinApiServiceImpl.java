@@ -69,7 +69,7 @@ public class CoinApiServiceImpl implements CoinApiService {
         if (profile.equals(TEST_PROFILE)) {
             return getMockedExchangeRates();
         } else {
-            return getRatesFromApi().getRates();
+            return getRatesFromApi(1).getRates();
         }
     }
 
@@ -84,11 +84,13 @@ public class CoinApiServiceImpl implements CoinApiService {
     }
 
 
-    private ExchangeRateResponse getRatesFromApi() {
-        try {
-            TimeUnit.SECONDS.sleep(1L);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+    private ExchangeRateResponse getRatesFromApi(int timeoutSeconds) {
+        if (timeoutSeconds > 0) {
+            try {
+                TimeUnit.SECONDS.sleep(timeoutSeconds);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         String apiKey = config.getString(COIN_API_KEY_CONFIG);
