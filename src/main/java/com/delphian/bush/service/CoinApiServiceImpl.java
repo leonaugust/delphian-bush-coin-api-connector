@@ -3,6 +3,7 @@ package com.delphian.bush.service;
 import com.delphian.bush.config.CoinApiSourceConnectorConfig;
 import com.delphian.bush.dto.ExchangeRate;
 import com.delphian.bush.dto.ExchangeRateResponse;
+import com.delphian.bush.util.TimeUtil;
 import com.delphian.bush.util.json.ExchangeRateJsonServiceImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -57,7 +58,7 @@ public class CoinApiServiceImpl implements CoinApiService {
                     }
                     return false;
                 })
-                .sorted(Comparator.comparing(ExchangeRate::getAssetIdQuote))
+                .sorted(Comparator.comparing(e -> TimeUtil.parse(e.getTime())))
                 .collect(Collectors.toList());
         log.info("The amount of filtered rates which offset is greater than sourceOffset: {}", filtered.size());
         return filtered;

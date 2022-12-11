@@ -32,7 +32,8 @@ public class CoinApiServiceImplTest {
         properties.put(COIN_API_KEY_CONFIG, getApiKey());
         CoinApiServiceImpl coinApiService = new CoinApiServiceImpl(getConfig(properties));
         List<ExchangeRate> rates = coinApiService.getFilteredRates(Optional.empty());
-        List<ExchangeRate> expectedSorted = rates.stream().sorted(Comparator.comparing(ExchangeRate::getAssetIdQuote))
+        List<ExchangeRate> expectedSorted = rates.stream()
+                .sorted(Comparator.comparing(e -> TimeUtil.parse(e.getTime())))
                 .collect(Collectors.toList());
         assertEquals(expectedSorted, rates);
     }
