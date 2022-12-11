@@ -5,7 +5,7 @@ import org.apache.kafka.common.config.ConfigException;
 
 public class PollTimeoutValidator implements ConfigDef.Validator{
 
-    public static final long MIN_POLL = 10;
+    public static final long MIN_POLL = 20;
 
     @Override
     public void ensureValid(String name, Object value) {

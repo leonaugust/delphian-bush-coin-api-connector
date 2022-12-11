@@ -21,7 +21,7 @@ Configurable parameters:
 
 * `topic` - Name of the topic to which kafka will push the data
 
-* `poll.timeout` - Default: 60. Should be bigger than 10. Time in seconds between the poll.
+* `poll.timeout` - Default: 60. Should be bigger than 20. Time in seconds between the poll.
 
 * `name` - The last offset will be associated with the name given. **Side note**: for testing purposes, change name after each start.
   Otherwise, the connector will keep the latest offset to track the place where he left
