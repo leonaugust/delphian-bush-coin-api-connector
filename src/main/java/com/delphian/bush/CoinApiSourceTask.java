@@ -59,10 +59,8 @@ public class CoinApiSourceTask extends SourceTask {
         Optional<Map<String, Object>> sourceOffset = getLatestSourceOffset();
         List<ExchangeRate> filteredRates = coinApiService.getFilteredRates(sourceOffset);
 
-        log.info("The amount of filtered rates which offset is greater than sourceOffset: {}", filteredRates.size());
         if (!CollectionUtils.isEmpty(filteredRates)) {
             for (ExchangeRate rate : filteredRates) {
-                log.info("Trying to add sourceRecord: {}", rate.getAssetIdQuote());
                 records.add(generateRecordFromNews(rate));
             }
         }

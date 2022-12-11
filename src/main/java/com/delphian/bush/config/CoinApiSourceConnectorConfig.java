@@ -27,6 +27,10 @@ public class CoinApiSourceConnectorConfig extends AbstractConfig {
 
     public static final String POLL_TIMEOUT_DOC = "How much time to wait between polls";
 
+    public static final String DEBUG_ADDITIONAL_INFO = "debug.additional.info";
+    public static final String DEBUG_ADDITIONAL_INFO_DOC = "Additional debug information enabled";
+
+
     public CoinApiSourceConnectorConfig(ConfigDef config, Map<String, String> parsedConfig) {
         super(config, parsedConfig);
     }
@@ -41,6 +45,7 @@ public class CoinApiSourceConnectorConfig extends AbstractConfig {
                 .define(APPLICATION_CONFIG, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, APPLICATION_DOC)
                 .define(COIN_API_KEY_CONFIG, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, COIN_API_KEY_DOC)
                 .define(PROFILE_ACTIVE_CONFIG, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, PROFILE_DOC)
-                .define(POLL_TIMEOUT_CONFIG, ConfigDef.Type.LONG, ConfigDef.Importance.HIGH, POLL_TIMEOUT_DOC);
+                .define(POLL_TIMEOUT_CONFIG, ConfigDef.Type.LONG, ConfigDef.Importance.HIGH, POLL_TIMEOUT_DOC)
+                .define(DEBUG_ADDITIONAL_INFO, ConfigDef.Type.BOOLEAN, false, ConfigDef.Importance.LOW, DEBUG_ADDITIONAL_INFO_DOC);
     }
 }

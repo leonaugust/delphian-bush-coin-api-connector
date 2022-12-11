@@ -19,8 +19,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static com.delphian.bush.config.CoinApiSourceConnectorConfig.COIN_API_KEY_CONFIG;
-import static com.delphian.bush.config.CoinApiSourceConnectorConfig.PROFILE_ACTIVE_CONFIG;
+import static com.delphian.bush.config.CoinApiSourceConnectorConfig.*;
 import static com.delphian.bush.config.schema.ExchangeRateSchema.ASSET_ID_QUOTE_FIELD;
 import static com.delphian.bush.config.schema.ExchangeRateSchema.TIME_FIELD;
 
@@ -39,13 +38,23 @@ public class CoinApiServiceImpl implements CoinApiService {
 
     @Override
     public List<ExchangeRate> getFilteredRates(Optional<Map<String, Object>> sourceOffset) {
-        return getRates().stream()
+        List<ExchangeRate> filtered = getRates().stream()
                 .filter(filterByOffset(sourceOffset))
                 .sorted(Comparator.comparing(ExchangeRate::getAssetIdQuote))
                 .collect(Collectors.toList());
+        Boolean additionalDebugEnabled = config.getBoolean(DEBUG_ADDITIONAL_INFO);
+        if (additionalDebugEnabled) {
+            log.info("The amount of filtered rates which offset is greater than sourceOffset: {}", filtered.size());
+        }
+        return filtered;
     }
 
     private Predicate<ExchangeRate> filterByOffset(Optional<Map<String, Object>> sourceOffset) {
+        Boolean additionalDebugEnabled = config.getBoolean(DEBUG_ADDITIONAL_INFO);
+        if (additionalDebugEnabled && !sourceOffset.isPresent()) {
+            log.info("Latest offset is not null, additional checking required");
+        }
+
         return exchangeRate -> {
             if (sourceOffset.isPresent() &&
                     sourceOffset.get().get(ASSET_ID_QUOTE_FIELD) != null &&
@@ -53,17 +62,17 @@ public class CoinApiServiceImpl implements CoinApiService {
             ) {
                 String offsetAssetIdQuote = (String) sourceOffset.get().get(ASSET_ID_QUOTE_FIELD);
                 String offsetTime = (String) sourceOffset.get().get(TIME_FIELD);
-
-                log.info("Latest offset is not null, additional checking required");
-                // DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z");
-                //ZonedDateTime zonedDateTime = ZonedDateTime.parse("2015-05-05 10:15:30 Europe/Paris", formatter);
                 if (ZonedDateTime.parse(exchangeRate.getTime()).toLocalDateTime() // all rates have the same time. If coin-api received new rates, the time parameter will be increased
                         .isAfter(ZonedDateTime.parse(offsetTime).toLocalDateTime())) {
-                    log.info("time is later second case newsId: [{}] is bigger than latestOffset: [{}], added rate to result", exchangeRate.getAssetIdQuote(), offsetAssetIdQuote);
+                    if (additionalDebugEnabled) {
+                        log.info("time is later second case newsId: [{}] is bigger than latestOffset: [{}], added rate to result", exchangeRate.getAssetIdQuote(), offsetAssetIdQuote);
+                    }
                     return true;
                 }
             } else {
-                log.info("Latest offset was null, added rate to result");
+                if (additionalDebugEnabled) {
+                    log.info("Latest offset was null, added rate to result");
+                }
                 return true;
             }
             return false;
