@@ -61,3 +61,8 @@ Stop connector and clean up data written to Kafka
     docker container stop rates-connector
     docker-compose down --volumes
 -----
+**Setup in cluster**
+
+    Produces fat jar coin-api-connector-VERSION-jar-with-dependencies.jar
+
+    mvn clean package -DskipTests
