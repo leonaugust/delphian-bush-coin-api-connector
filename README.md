@@ -66,3 +66,5 @@ Stop connector and clean up data written to Kafka
     Produces fat jar coin-api-connector-VERSION-jar-with-dependencies.jar
 
     mvn clean package -DskipTests
+
+<a href="https://github.com/leonaugust/delphian-bush-hoover/blob/master/README.md" target="_blank">Usage example</a>
