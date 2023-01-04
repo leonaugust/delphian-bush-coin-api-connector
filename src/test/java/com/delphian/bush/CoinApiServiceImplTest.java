@@ -47,57 +47,57 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CoinApiServiceImplTest {
 
-    public static final int MOCKED_RATES_SIZE = 5;
+  public static final int MOCKED_RATES_SIZE = 5;
 
-    @Test
-    void getFilteredNewsIsSortedTest() {
-        Map<String, String> properties = new HashMap<>();
-        properties.put(PROFILE_ACTIVE_CONFIG, PROD_PROFILE);
-        properties.put(COIN_API_KEY_CONFIG, getApiKey());
-        CoinApiServiceImpl coinApiService = new CoinApiServiceImpl(getConfig(properties));
-        List<ExchangeRate> rates = coinApiService.getFilteredRates(Optional.empty());
-        List<ExchangeRate> expectedSorted = rates.stream()
-                .sorted(Comparator.comparing(e -> TimeUtil.parse(e.getTime())))
-                .collect(Collectors.toList());
-        assertEquals(expectedSorted, rates);
-    }
+  @Test
+  void getFilteredNewsIsSortedTest() {
+    Map<String, String> properties = new HashMap<>();
+    properties.put(PROFILE_ACTIVE_CONFIG, PROD_PROFILE);
+    properties.put(COIN_API_KEY_CONFIG, getApiKey());
+    CoinApiServiceImpl coinApiService = new CoinApiServiceImpl(getConfig(properties));
+    List<ExchangeRate> rates = coinApiService.getFilteredRates(Optional.empty());
+    List<ExchangeRate> expectedSorted = rates.stream()
+        .sorted(Comparator.comparing(e -> TimeUtil.parse(e.getTime())))
+        .collect(Collectors.toList());
+    assertEquals(expectedSorted, rates);
+  }
 
-    @Test
-    void getFilteredRatesIsFilteredByOffsetTest() {
-        Map<String, String> properties = new HashMap<>();
-        properties.put(PROFILE_ACTIVE_CONFIG, PROD_PROFILE);
-        properties.put(COIN_API_KEY_CONFIG, getApiKey());
-        CoinApiServiceImpl coinApiService = new CoinApiServiceImpl(getConfig(properties));
-        List<ExchangeRate> rates = coinApiService.getFilteredRates(Optional.empty());
-        int pivot = rates.size() / 2;
-        ExchangeRate pivotRate = rates.get(pivot - 1);
-        List<ExchangeRate> filtered = coinApiService.getFilteredRates(Optional.of(pivotRate.getTime()));
-        assertTrue(filtered.size() < rates.size());
-    }
+  @Test
+  void getFilteredRatesIsFilteredByOffsetTest() {
+    Map<String, String> properties = new HashMap<>();
+    properties.put(PROFILE_ACTIVE_CONFIG, PROD_PROFILE);
+    properties.put(COIN_API_KEY_CONFIG, getApiKey());
+    CoinApiServiceImpl coinApiService = new CoinApiServiceImpl(getConfig(properties));
+    List<ExchangeRate> rates = coinApiService.getFilteredRates(Optional.empty());
+    int pivot = rates.size() / 2;
+    ExchangeRate pivotRate = rates.get(pivot - 1);
+    List<ExchangeRate> filtered = coinApiService.getFilteredRates(Optional.of(pivotRate.getTime()));
+    assertTrue(filtered.size() < rates.size());
+  }
 
-    @Test
-    void getRatesWithTestProfileTest() {
-        Map<String, String> properties = new HashMap<>();
-        properties.put(PROFILE_ACTIVE_CONFIG, TEST_PROFILE);
-        properties.put(COIN_API_KEY_CONFIG, null);
-        CoinApiServiceImpl coinApiService = new CoinApiServiceImpl(getConfig(properties));
-        List<ExchangeRate> rates = coinApiService.getRates();
-        assertEquals(MOCKED_RATES_SIZE, rates.size());
-    }
+  @Test
+  void getRatesWithTestProfileTest() {
+    Map<String, String> properties = new HashMap<>();
+    properties.put(PROFILE_ACTIVE_CONFIG, TEST_PROFILE);
+    properties.put(COIN_API_KEY_CONFIG, null);
+    CoinApiServiceImpl coinApiService = new CoinApiServiceImpl(getConfig(properties));
+    List<ExchangeRate> rates = coinApiService.getRates();
+    assertEquals(MOCKED_RATES_SIZE, rates.size());
+  }
 
-    @Test
-    void getRatesWithProdProfileTest() {
-        Map<String, String> properties = new HashMap<>();
-        properties.put(PROFILE_ACTIVE_CONFIG, PROD_PROFILE);
-        properties.put(COIN_API_KEY_CONFIG, getApiKey());
-        CoinApiServiceImpl coinApiService = new CoinApiServiceImpl(getConfig(properties));
-        List<ExchangeRate> rates = coinApiService.getRates();
-        LocalDateTime ratesDate = TimeUtil.parse(rates.get(0).getTime());
-        assertEquals(TimeUtil.nowFormatted().getDayOfMonth(), ratesDate.getDayOfMonth());
-        assertTrue(rates.size() > MOCKED_RATES_SIZE);
-    }
+  @Test
+  void getRatesWithProdProfileTest() {
+    Map<String, String> properties = new HashMap<>();
+    properties.put(PROFILE_ACTIVE_CONFIG, PROD_PROFILE);
+    properties.put(COIN_API_KEY_CONFIG, getApiKey());
+    CoinApiServiceImpl coinApiService = new CoinApiServiceImpl(getConfig(properties));
+    List<ExchangeRate> rates = coinApiService.getRates();
+    LocalDateTime ratesDate = TimeUtil.parse(rates.get(0).getTime());
+    assertEquals(TimeUtil.nowFormatted().getDayOfMonth(), ratesDate.getDayOfMonth());
+    assertTrue(rates.size() > MOCKED_RATES_SIZE);
+  }
 
-    private CoinApiSourceConnectorConfig getConfig(Map<String, String> overriddenProperties) {
-        return new CoinApiSourceConnectorConfig(getPropertiesOverridden(overriddenProperties));
-    }
+  private CoinApiSourceConnectorConfig getConfig(Map<String, String> overriddenProperties) {
+    return new CoinApiSourceConnectorConfig(getPropertiesOverridden(overriddenProperties));
+  }
 }

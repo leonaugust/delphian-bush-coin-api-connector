@@ -20,6 +20,7 @@ Change `coin.api.key`.
     poll.timeout=60
 
 Configurable parameters:
+
 * `profile.active` - Default: **test**. Available values: [test/prod].  
   **test** - will poll rates from test file, not calling API.   
   **prod** - will call real coin-api, requires `coin.api.key`
@@ -31,13 +32,14 @@ Configurable parameters:
 
 * `poll.timeout` - Default: 60. Should be bigger than 20. Time in seconds between the poll.
 
-* `name` - The last offset will be associated with the name given. **Side note**: for testing purposes, change name after each start.
+* `name` - The last offset will be associated with the name given. **Side note**: for testing
+  purposes, change name after each start.
   Otherwise, the connector will keep the latest offset to track the place where it stopped reading.
 
 Additional properties:
+
 * `debug.additional.info` - Optional(default - false). Available values: [true/false].
   Enables logging of the additional information.
-
 
 -----
 **Testing in standalone mode**
@@ -47,6 +49,7 @@ Launch Kafka with docker-compose(starts on port *29092*)
     cd kafka
     docker-compose up -d
     cd ..
+
 -----
 Start in standalone mode
 
@@ -68,6 +71,7 @@ Stop connector and clean up data written to Kafka
     cd kafka
     docker container stop rates-connector
     docker-compose down --volumes
+
 -----
 **Setup in cluster**
 
@@ -75,4 +79,5 @@ Stop connector and clean up data written to Kafka
 
     mvn clean package -DskipTests
 
-<a href="https://github.com/leonaugust/delphian-bush-hoover/blob/master/README.md" target="_blank">Usage example</a>
+<a href="https://github.com/leonaugust/delphian-bush-hoover/blob/master/README.md" target="_blank">
+Usage example</a>

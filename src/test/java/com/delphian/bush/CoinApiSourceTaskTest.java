@@ -35,23 +35,24 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CoinApiSourceTaskTest {
-    private CoinApiSourceTask coinApiSourceTask = new CoinApiSourceTask();
 
-    private static final Logger log = LoggerFactory.getLogger(CoinApiSourceTaskTest.class);
+  private CoinApiSourceTask coinApiSourceTask = new CoinApiSourceTask();
 
-    @Test
-    public void buildRecordValueTest() {
-        ExchangeRate exchangeRate = ExchangeRate.builder()
-                .rate("42249.215173113396889938027027")
-                .assetIdQuote("BTC")
-                .time("2022-03-09T17:15:35.8000000Z")
-                .build();
+  private static final Logger log = LoggerFactory.getLogger(CoinApiSourceTaskTest.class);
 
-        Struct struct = coinApiSourceTask.buildRecordValue(exchangeRate);
-        assertDoesNotThrow(struct::validate);
-        ExchangeRate rateFromStruct = ExchangeRateConverter.INSTANCE.to(struct);
-        assertEquals(exchangeRate.getRate(), rateFromStruct.getRate());
-        assertEquals(exchangeRate.getAssetIdQuote(), rateFromStruct.getAssetIdQuote());
-        assertEquals(exchangeRate.getTime(), rateFromStruct.getTime());
-    }
+  @Test
+  public void buildRecordValueTest() {
+    ExchangeRate exchangeRate = ExchangeRate.builder()
+        .rate("42249.215173113396889938027027")
+        .assetIdQuote("BTC")
+        .time("2022-03-09T17:15:35.8000000Z")
+        .build();
+
+    Struct struct = coinApiSourceTask.buildRecordValue(exchangeRate);
+    assertDoesNotThrow(struct::validate);
+    ExchangeRate rateFromStruct = ExchangeRateConverter.INSTANCE.to(struct);
+    assertEquals(exchangeRate.getRate(), rateFromStruct.getRate());
+    assertEquals(exchangeRate.getAssetIdQuote(), rateFromStruct.getAssetIdQuote());
+    assertEquals(exchangeRate.getTime(), rateFromStruct.getTime());
+  }
 }

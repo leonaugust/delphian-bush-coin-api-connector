@@ -35,50 +35,55 @@ import static com.delphian.bush.service.CoinApiServiceImpl.TEST_PROFILE;
 
 public class CoinApiSourceConnectorConfig extends AbstractConfig {
 
-    public static final String APPLICATION_CONFIG = "application";
+  public static final String APPLICATION_CONFIG = "application";
 
-    public static final String APPLICATION_DOC = "Will be used as a partition name";
+  public static final String APPLICATION_DOC = "Will be used as a partition name";
 
-    public static final String TOPIC_CONFIG = "topic";
-    private static final String TOPIC_DOC = "Topic to write to";
+  public static final String TOPIC_CONFIG = "topic";
+  private static final String TOPIC_DOC = "Topic to write to";
 
-    public static final String COIN_API_KEY_CONFIG = "coin.api.key";
-    public static final String COIN_API_KEY_DOC = "Specify your crypto panic api key";
-
-
-    public static final String PROFILE_ACTIVE_CONFIG = "profile.active";
-
-    public static final String PROFILE_DOC = "Which profile is active";
+  public static final String COIN_API_KEY_CONFIG = "coin.api.key";
+  public static final String COIN_API_KEY_DOC = "Specify your crypto panic api key";
 
 
-    public static final String POLL_TIMEOUT_CONFIG = "poll.timeout";
+  public static final String PROFILE_ACTIVE_CONFIG = "profile.active";
 
-    public static final String POLL_TIMEOUT_DOC = "How much time to wait between polls";
-
-    public static final String DEBUG_ADDITIONAL_INFO = "debug.additional.info";
-    public static final String DEBUG_ADDITIONAL_INFO_DOC = "Additional debug information enabled";
+  public static final String PROFILE_DOC = "Which profile is active";
 
 
-    public CoinApiSourceConnectorConfig(ConfigDef config, Map<String, String> parsedConfig) {
-        super(config, parsedConfig);
-    }
+  public static final String POLL_TIMEOUT_CONFIG = "poll.timeout";
 
-    public CoinApiSourceConnectorConfig(Map<String, String> parsedConfig) {
-        this(conf(), parsedConfig);
-    }
+  public static final String POLL_TIMEOUT_DOC = "How much time to wait between polls";
 
-    /**
-     * Defines config properties of the connector.
-     *
-     * @return ConfigDef with defined properties
-     */
-    public static ConfigDef conf() {
-        return new ConfigDef()
-                .define(TOPIC_CONFIG, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, TOPIC_DOC)
-                .define(APPLICATION_CONFIG, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, APPLICATION_DOC)
-                .define(COIN_API_KEY_CONFIG, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, COIN_API_KEY_DOC)
-                .define(PROFILE_ACTIVE_CONFIG, ConfigDef.Type.STRING, TEST_PROFILE, new ActiveProfileValidator(), ConfigDef.Importance.HIGH,  PROFILE_DOC)
-                .define(POLL_TIMEOUT_CONFIG, ConfigDef.Type.LONG, 60, new PollTimeoutValidator(), ConfigDef.Importance.HIGH, POLL_TIMEOUT_DOC)
-                .define(DEBUG_ADDITIONAL_INFO, ConfigDef.Type.BOOLEAN, false, ConfigDef.Importance.LOW, DEBUG_ADDITIONAL_INFO_DOC);
-    }
+  public static final String DEBUG_ADDITIONAL_INFO = "debug.additional.info";
+  public static final String DEBUG_ADDITIONAL_INFO_DOC = "Additional debug information enabled";
+
+
+  public CoinApiSourceConnectorConfig(ConfigDef config, Map<String, String> parsedConfig) {
+    super(config, parsedConfig);
+  }
+
+  public CoinApiSourceConnectorConfig(Map<String, String> parsedConfig) {
+    this(conf(), parsedConfig);
+  }
+
+  /**
+   * Defines config properties of the connector.
+   *
+   * @return ConfigDef with defined properties
+   */
+  public static ConfigDef conf() {
+    return new ConfigDef()
+        .define(TOPIC_CONFIG, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, TOPIC_DOC)
+        .define(APPLICATION_CONFIG, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH,
+            APPLICATION_DOC)
+        .define(COIN_API_KEY_CONFIG, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH,
+            COIN_API_KEY_DOC)
+        .define(PROFILE_ACTIVE_CONFIG, ConfigDef.Type.STRING, TEST_PROFILE,
+            new ActiveProfileValidator(), ConfigDef.Importance.HIGH, PROFILE_DOC)
+        .define(POLL_TIMEOUT_CONFIG, ConfigDef.Type.LONG, 60, new PollTimeoutValidator(),
+            ConfigDef.Importance.HIGH, POLL_TIMEOUT_DOC)
+        .define(DEBUG_ADDITIONAL_INFO, ConfigDef.Type.BOOLEAN, false, ConfigDef.Importance.LOW,
+            DEBUG_ADDITIONAL_INFO_DOC);
+  }
 }

@@ -8,7 +8,9 @@ the MIT license to this project.
 Code changes are submitted via a pull request. When submitting a PR use the following
 guidelines:
 
-* Follow the <a href="https://github.com/google/styleguide/blob/gh-pages/intellij-java-google-style.xml" target="_blank">Google Java Code Style</a>
+* Follow
+  the <a href="https://github.com/google/styleguide/blob/gh-pages/intellij-java-google-style.xml" target="_blank">
+  Google Java Code Style</a>
 * Add/update documentation appropriately for the change you are making.
 * Non-trivial changes should include unit tests covering the new functionality and potentially
   integration tests.
