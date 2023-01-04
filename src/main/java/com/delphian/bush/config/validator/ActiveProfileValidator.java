@@ -13,6 +13,12 @@ public class ActiveProfileValidator implements ConfigDef.Validator{
 
     List<String> availableProfiles = Arrays.asList(TEST_PROFILE, PROD_PROFILE);
 
+    /**
+     * Ensures the selected profile is one of {AVAILABLE_PROFILES}
+     *
+     * @param name  The name of the configuration
+     * @param value The value of the configuration
+     */
     @Override
     public void ensureValid(String name, Object value) {
         String profile = (String) value;

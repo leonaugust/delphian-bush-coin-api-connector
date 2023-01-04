@@ -33,6 +33,9 @@ public class CoinApiServiceImpl implements CoinApiService {
         this.config = config;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public List<ExchangeRate> getFilteredRates(Optional<String> sourceOffset) {
         Boolean additionalDebugEnabled = config.getBoolean(DEBUG_ADDITIONAL_INFO);

@@ -8,6 +8,9 @@ import org.apache.kafka.connect.data.Struct;
 public class ExchangeRateConverter implements ConnectDataMapper<ExchangeRate> {
     public static final ExchangeRateConverter INSTANCE = new ExchangeRateConverter();
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public ExchangeRate to(Struct s) {
         ExchangeRate exchangeRate = new ExchangeRate();
@@ -17,6 +20,9 @@ public class ExchangeRateConverter implements ConnectDataMapper<ExchangeRate> {
         return exchangeRate;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public Struct to(ExchangeRate exchangeRate) {
 
@@ -26,6 +32,9 @@ public class ExchangeRateConverter implements ConnectDataMapper<ExchangeRate> {
                 .put(ExchangeRateSchema.ASSET_ID_QUOTE_FIELD, exchangeRate.getAssetIdQuote());
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public Schema getSchema() {
         return ExchangeRateSchema.EXCHANGE_RATE_SCHEMA;

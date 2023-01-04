@@ -7,6 +7,12 @@ public class PollTimeoutValidator implements ConfigDef.Validator{
 
     public static final long MIN_POLL = 20;
 
+    /**
+     * Ensures the poll timeout is not null and not less than {@value #MIN_POLL}
+     *
+     * @param name  The name of the configuration
+     * @param value The value of the configuration
+     */
     @Override
     public void ensureValid(String name, Object value) {
         Long pollTimeout = (Long) value;

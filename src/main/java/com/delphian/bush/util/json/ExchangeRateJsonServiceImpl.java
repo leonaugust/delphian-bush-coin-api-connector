@@ -22,7 +22,9 @@ public class ExchangeRateJsonServiceImpl {
         this.targetClass = ExchangeRateResponse.class;
     }
 
-
+    /**
+     * @return The rates from test file <a href="file:../resources/mocked-stats.json</a>
+     */
     public ExchangeRateResponse getFromJson() {
         try {
             return objectMapper.readValue(inputStream, targetClass);

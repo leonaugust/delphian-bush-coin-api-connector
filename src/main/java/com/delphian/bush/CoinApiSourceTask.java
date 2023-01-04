@@ -35,11 +35,17 @@ public class CoinApiSourceTask extends SourceTask {
 
     private Long timeoutSeconds;
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public String version() {
         return VersionUtil.getVersion();
     }
 
+    /**
+     * Sets the initial properties of the connector at the start.
+     */
     @Override
     public void start(Map<String, String> props) {
         config = new CoinApiSourceConnectorConfig(props);
@@ -47,6 +53,10 @@ public class CoinApiSourceTask extends SourceTask {
         timeoutSeconds = config.getLong(POLL_TIMEOUT_CONFIG);
     }
 
+    /**
+     * @return Rates records.
+     * @throws InterruptedException on sleep().
+     */
     @Override
     public List<SourceRecord> poll() throws InterruptedException {
         if (latestPoll != null && !now().isAfter(latestPoll.plusSeconds(timeoutSeconds))) {
@@ -117,10 +127,17 @@ public class CoinApiSourceTask extends SourceTask {
                 .put(DATE_FIELD, TimeUtil.nowFormatted().toString());
     }
 
+    /**
+     * @param exchangeRate rate
+     * @return Struct value from rate.
+     */
     public Struct buildRecordValue(ExchangeRate exchangeRate) {
         return ExchangeRateConverter.INSTANCE.to(exchangeRate);
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void stop() {
 
