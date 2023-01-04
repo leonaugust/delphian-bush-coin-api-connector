@@ -1,70 +1,39 @@
-Delphian Bush. Coin Api Source Connector.
+(Unofficial) Coin Api Source Connector.
 -----------------
-Add your properties in the following directory /config/custom-connector.properties
 
-    name=CoinApiSourceConnectorDemo
-    tasks.max=1
-    connector.class=com.delphian.com.delphian.bush.CoinApiSourceConnector
-    topic=exchange-rates
-    application=crypto-rates
-    coin.api.key=YOUR_API_KEY
-    profile.active=test
-    poll.timeout=60
+Provides Kafka Connect Source Connector, to load the exchange-rates to Kafka from the
+one-stop-solution market data provider for cryptocurrency markets
+API https://www.coinapi.io/
 
-Configurable parameters:
-* `profile.active` - Default: **test**. Available values: [test/prod].  
-  **test** - will poll 20 mocked news  
-  **prod** - will call real coin-api, requires API_KEY
+## Installation
 
-* `application` - Name of your application  
-  Will be included in your key schema
+<a href="https://github.com/leonaugust/delphian-bush-coin-api-connector/blob/master/INSTALLATION.md" target="_blank">
+Reference documentation</a>
 
-* `topic` - Name of the topic to which kafka will push the data
+---
 
-* `poll.timeout` - Default: 60. Should be bigger than 20. Time in seconds between the poll.
+## Contribute
 
-* `name` - The last offset will be associated with the name given. **Side note**: for testing purposes, change name after each start.
-  Otherwise, the connector will keep the latest offset to track the place where he left
+<a href="https://github.com/leonaugust/delphian-bush-coin-api-connector/blob/master/CONTRIBUTING.md" target="_blank">
+Contribution guidelines</a>
 
-Additional properties:
-* `debug.additional.info` - Optional(default - false). Available values: [true/false].
-  Enables logging of the additional information.
+---
 
+## Reporting Issues
 
------
-**Testing in standalone mode**
+Coin Api Source Connector uses GitHub's integrated issue tracking system to record bugs and
+feature requests.
+If you want to raise an issue, please follow the recommendations below:
 
-Launch Kafka with docker-compose(starts on port *29092*)
+* Before you log a bug,
+  please <a href="https://github.com/leonaugust/delphian-bush-coin-api-connector/issues" target="_blank">
+  search the issue tracker</a> to see if someone has already reported the problem.
+* If the issue doesn't already exist, create a new issue.
 
-    cd kafka
-    docker-compose up -d
------
-Start in standalone mode
+---
 
-    cd ..
-    mvn clean package -DskipTests
-    ./run.sh
+## License
 
------
-Read data
-
-    docker exec --interactive --tty kafka \
-    kafka-console-consumer --bootstrap-server kafka:29092 \
-    --topic exchange-rates \
-    --from-beginning
-
------
-
-Stop connector and clean up data written to Kafka
-
-    cd kafka
-    docker container stop rates-connector
-    docker-compose down --volumes
------
-**Setup in cluster**
-
-    Produces fat jar coin-api-connector-VERSION-jar-with-dependencies.jar
-
-    mvn clean package -DskipTests
-
-<a href="https://github.com/leonaugust/delphian-bush-hoover/blob/master/README.md" target="_blank">Usage example</a>
+Coin Api Source Connector is Open Source software released under
+the <a href="https://github.com/leonaugust/delphian-bush-coin-api-connector/blob/master/LICENSE" target="_blank">
+MIT license</a>
