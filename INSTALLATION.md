@@ -14,7 +14,7 @@ Change `coin.api.key`.
     tasks.max=1
     connector.class=com.delphian.com.delphian.bush.CoinApiSourceConnector
     topic=exchange-rates
-    application=crypto-rates
+    application=delphian-bush-coin-api-source-connector
     coin.api.key=YOUR_API_KEY
     profile.active=test
     poll.timeout=60
