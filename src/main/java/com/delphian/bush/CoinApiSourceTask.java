@@ -7,7 +7,7 @@ import com.delphian.bush.service.CoinApiService;
 import com.delphian.bush.service.CoinApiServiceImpl;
 import com.delphian.bush.util.TimeUtil;
 import com.delphian.bush.util.VersionUtil;
-import com.delphian.bush.util.converter.ExchangeRateConverter;
+import com.delphian.bush.util.mapper.ExchangeRateConverter;
 import org.apache.kafka.connect.data.Struct;
 import org.apache.kafka.connect.source.SourceRecord;
 import org.apache.kafka.connect.source.SourceTask;
@@ -118,7 +118,7 @@ public class CoinApiSourceTask extends SourceTask {
     }
 
     public Struct buildRecordValue(ExchangeRate exchangeRate) {
-        return ExchangeRateConverter.INSTANCE.toConnectData(exchangeRate);
+        return ExchangeRateConverter.INSTANCE.to(exchangeRate);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.delphian.bush;
 
 import com.delphian.bush.dto.ExchangeRate;
-import com.delphian.bush.util.converter.ExchangeRateConverter;
+import com.delphian.bush.util.mapper.ExchangeRateConverter;
 import org.apache.kafka.connect.data.Struct;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -25,7 +25,7 @@ public class CoinApiSourceTaskTest {
 
         Struct struct = coinApiSourceTask.buildRecordValue(exchangeRate);
         assertDoesNotThrow(struct::validate);
-        ExchangeRate rateFromStruct = ExchangeRateConverter.INSTANCE.fromConnectData(struct);
+        ExchangeRate rateFromStruct = ExchangeRateConverter.INSTANCE.to(struct);
         assertEquals(exchangeRate.getRate(), rateFromStruct.getRate());
         assertEquals(exchangeRate.getAssetIdQuote(), rateFromStruct.getAssetIdQuote());
         assertEquals(exchangeRate.getTime(), rateFromStruct.getTime());
